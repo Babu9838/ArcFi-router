@@ -1,0 +1,128 @@
+{
+  "app": {
+    "name": "God Mode Web3 Dashboard",
+    "version": "1.0.0",
+    "type": "multi-chain-defi-dashboard"
+  },
+
+  "networks": {
+    "sepolia": {
+      "chainId": 11155111,
+      "rpc": "https://rpc.sepolia.org",
+      "nativeToken": "ETH"
+    },
+    "arbitrum_sepolia": {
+      "chainId": 421614,
+      "rpc": "https://sepolia-rollup.arbitrum.io/rpc",
+      "nativeToken": "ETH"
+    },
+    "arc_testnet": {
+      "chainId": 5042002,
+      "rpc": "https://rpc.testnet.arc.network",
+      "nativeToken": "USDC"
+    }
+  },
+
+  "wallet": {
+    "provider": "metamask",
+    "features": [
+      "connect",
+      "disconnect",
+      "switch_chain",
+      "sign_message"
+    ]
+  },
+
+  "tokens": {
+    "11155111": {
+      "ETH": "native",
+      "USDC": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C723"
+    },
+    "421614": {
+      "ETH": "native",
+      "USDC": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d"
+    },
+    "5042002": {
+      "USDC": "0x3600000000000000000000000000000000000000",
+      "EURC": "0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a",
+      "cirBTC": "not_available"
+    }
+  },
+
+  "features": {
+    "balance": {
+      "eth": true,
+      "erc20": true,
+      "multi_chain": true
+    },
+
+    "transfer": {
+      "eth": true,
+      "erc20": true,
+      "tx_hash_tracking": true
+    },
+
+    "swap": {
+      "enabled": true,
+      "providers": [
+        "uniswap_v3",
+        "1inch"
+      ],
+      "status": "integration_hook"
+    },
+
+    "bridge": {
+      "enabled": true,
+      "providers": [
+        "circle_cctp",
+        "arc_bridge_sdk"
+      ],
+      "status": "integration_hook"
+    },
+
+    "auth": {
+      "siwe_login": true,
+      "signature_auth": true
+    }
+  },
+
+  "ui": {
+    "theme": "dark_fintech",
+    "layout": "dashboard_grid",
+    "panels": [
+      "wallet",
+      "network_switch",
+      "balance",
+      "send",
+      "swap",
+      "bridge",
+      "auth"
+    ]
+  },
+
+  "transactions": {
+    "track_hash": true,
+    "history": false,
+    "real_time_updates": false
+  },
+
+  "security": {
+    "signature_required": true,
+    "wallet_based_auth": true,
+    "session_storage": "local"
+  },
+
+  "integrations": {
+    "uniswap": {
+      "status": "ready_hook",
+      "router": "V3"
+    },
+    "circle": {
+      "cctp": "ready_hook"
+    },
+    "arc": {
+      "sdk": "ready_hook",
+      "unified_balance": true
+    }
+  }
+}
