@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>⚡ GOD MODE Web3 Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  background:#070b14;
+  color:#fff;
+}
+
+.header {
+  padding:20px;
+  text-align:center;
+  font-size:22px;
+  background:#0f172a;
+  font-weight:bold;
+}
+
+.container {
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.card {
+  background:#111c33;
+  padding:15px;
+  border-radius:12px;
+}
+
+input, select, button {
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+  border:none;
+}
+
+button {
+  background:#3b82f6;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover {
+  background:#2563eb;
+}
+
+.small {
+  font-size:12px;
+  opacity:0.7;
+}
+
+.tx {
+  font-size:12px;
+  word-break:break-all;
+  color:#93c5fd;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">⚡ GOD MODE WEB3 DASHBOARD</div>
+
+<div class="container">
+
+<!-- WALLET -->
+<div class="card">
+  <h3>Wallet</h3>
+  <button onclick="connect()">Connect Wallet</button>
+  <p id="wallet">Not connected</p>
+  <p class="small">Chain: <span id="chain">-</span></p>
+</div>
+
+<!-- NETWORK -->
+<div class="card">
+  <h3>Network Switch</h3>
+  <button onclick="switchChain(11155111)">Sepolia</button>
+  <button onclick="switchChain(421614)">Arbitrum Sepolia</button>
+</div>
+
+<!-- BALANCE -->
+<div class="card">
+  <h3>Balances</h3>
+  <button onclick="balance()">Refresh</button>
+  <p>ETH: <span id="eth">0</span></p>
+  <p>USDC: <span id="usdc">0</span></p>
+</div>
+
+<!-- SEND -->
+<div class="card">
+  <h3>Send Assets</h3>
+
+  <input id="to" placeholder="Recipient"/>
+  <input id="amt" placeholder="Amount"/>
+
+  <select id="token">
+    <option value="ETH">ETH</option>
+    <option value="USDC">USDC</option>
+    <option value="EURC">EURC</option>
+  </select>
+
+  <button onclick="send()">Send Transaction</button>
+
+  <p class="tx" id="tx"></p>
+</div>
+
+<!-- SWAP -->
+<div class="card">
+  <h3>Swap Engine</h3>
+  <button onclick="swap()">Open Swap (Hook)</button>
+  <p class="small">Uniswap / 1inch ready integration point</p>
+</div>
+
+<!-- BRIDGE -->
+<div class="card">
+  <h3>Bridge Engine</h3>
+  <button onclick="bridge()">Open Bridge (Hook)</button>
+  <p class="small">CCTP / Arc SDK ready integration point</p>
+</div>
+
+<!-- LOGIN -->
+<div class="card">
+  <h3>SIWE Login</h3>
+  <button onclick="login()">Sign Login</button>
+  <p id="login">Not logged in</p>
+</div>
+
+</div>
+
+<script>
+
+let provider, signer, user;
+
+// testnet tokens
+const TOKENS = {
+  11155111: {
+    USDC: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C723"
+  },
+  421614: {
+    USDC: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d"
+  }
+};
+
+// ---------------- CONNECT ----------------
+async function connect() {
+  provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = await provider.getSigner();
+  user = await signer.getAddress();
+
+  document.getElementById("wallet").innerText = user;
+
+  const net = await provider.getNetwork();
+  document.getElementById("chain").innerText = net.chainId;
+}
+
+// ---------------- SWITCH ----------------
+async function switchChain(id) {
+  await window.ethereum.request({
+    method: "wallet_switchEthereumChain",
+    params: [{ chainId: "0x" + id.toString(16) }]
+  });
+}
+
+// ---------------- BALANCE ----------------
+async function balance() {
+  const eth = await provider.getBalance(user);
+  document.getElementById("eth").innerText =
+    ethers.formatEther(eth);
+
+  const chainId = (await provider.getNetwork()).chainId;
+  const usdcAddr = TOKENS[chainId]?.USDC;
+
+  if (usdcAddr) {
+    const abi = ["function balanceOf(address) view returns (uint)"];
+    const c = new ethers.Contract(usdcAddr, abi, provider);
+    const bal = await c.balanceOf(user);
+    document.getElementById("usdc").innerText = bal.toString();
+  }
+}
+
+// ---------------- SEND (REAL) ----------------
+async function send() {
+  const to = document.getElementById("to").value;
+  const amt = document.getElementById("amt").value;
+  const token = document.getElementById("token").value;
+
+  const chainId = (await provider.getNetwork()).chainId;
+
+  // ETH transfer
+  if (token === "ETH") {
+    const tx = await signer.sendTransaction({
+      to,
+      value: ethers.parseEther(amt)
+    });
+
+    document.getElementById("tx").innerText = tx.hash;
+    return;
+  }
+
+  // ERC20 transfer
+  const tokenAddr = TOKENS[chainId]?.[token];
+
+  if (!tokenAddr) {
+    alert("Token not supported on this chain");
+    return;
+  }
+
+  const abi = ["function transfer(address to, uint amount) returns (bool)"];
+  const contract = new ethers.Contract(tokenAddr, abi, signer);
+
+  const tx = await contract.transfer(to, amt);
+
+  document.getElementById("tx").innerText = tx.hash;
+}
+
+// ---------------- SWAP ----------------
+function swap() {
+  alert(`
+🔥 SWAP ENGINE READY
+
+Integration hooks:
+- Uniswap V3 Router
+- 1inch API
+- slippage control
+- routing optimization
+`);
+}
+
+// ---------------- BRIDGE ----------------
+function bridge() {
+  alert(`
+🌉 BRIDGE ENGINE READY
+
+Integration hooks:
+- Circle CCTP
+- Arc Unified Bridge SDK
+- cross-chain settlement
+`);
+}
+
+// ---------------- LOGIN ----------------
+async function login() {
+  const msg = "Login to GOD MODE Web3 Dashboard";
+
+  const sig = await signer.signMessage(msg);
+
+  document.getElementById("login").innerText =
+    "Signed ✔ " + sig.slice(0, 30) + "...";
+}
+
+</script>
+
+</body>
+</html>
