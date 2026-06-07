@@ -1,232 +1,179 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ArcFi Dashboard</title>
 
-<link rel="stylesheet" href="css/style.css">
-
-<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<!-- Header -->
-<header class="header">
-    <div class="brand">
-        <img src="assets/arcfi-logo.png" alt="ArcFi Logo">
-        <h1>ArcFi</h1>
+<div class="hero">
+
+    <div class="network-box">
+        <h4>🟢 Arc Testnet</h4>
+        <span>USDC Native Chain</span>
     </div>
-</header>
 
-<div class="container">
+    <div class="logo-area">
+        <img src="arcfi-logo.png" alt="ArcFi">
+        <h1>ArcFi Dashboard</h1>
+        <p>Unified Balance • Swap • Bridge • Secure • Fast</p>
+    </div>
 
-    <!-- Wallet -->
-    <section class="card">
-        <h2>Wallet</h2>
-
-        <button id="connectWallet">
-            Connect Wallet
-        </button>
-
-        <p>
-            Address:
-            <span id="walletAddress">
-                Not Connected
-            </span>
-        </p>
-
-        <p>
-            Chain:
-            <span id="currentChain">
-                -
-            </span>
-        </p>
-    </section>
-
-    <!-- Network -->
-    <section class="card">
-        <h2>Network Switch</h2>
-
-        <button data-chain="11155111">
-            Sepolia Testnet
-        </button>
-
-        <button data-chain="421614">
-            Arbitrum Sepolia
-        </button>
-
-        <button data-chain="5042002">
-            Arc Testnet
-        </button>
-    </section>
-
-    <!-- Balance -->
-    <section class="card">
-        <h2>Balances</h2>
-
-        <button id="refreshBalance">
-            Refresh
-        </button>
-
-        <div class="balance-grid">
-
-            <div class="balance-item">
-                <h3>ETH</h3>
-                <span id="ethBalance">0</span>
-            </div>
-
-            <div class="balance-item">
-                <h3>USDC</h3>
-                <span id="usdcBalance">0</span>
-            </div>
-
-            <div class="balance-item">
-                <h3>EURC</h3>
-                <span id="eurcBalance">0</span>
-            </div>
-
-            <div class="balance-item">
-                <h3>cirBTC</h3>
-                <span id="cirbtcBalance">0</span>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Send Assets -->
-    <section class="card">
-        <h2>Send Assets</h2>
-
-        <input
-            type="text"
-            id="receiver"
-            placeholder="Recipient Address">
-
-        <input
-            type="number"
-            id="amount"
-            placeholder="Amount">
-
-        <select id="tokenSelect">
-            <option>ETH</option>
-            <option>USDC</option>
-            <option>EURC</option>
-            <option>cirBTC</option>
-        </select>
-
-        <button id="sendAsset">
-            Send Transaction
-        </button>
-
-        <div id="txHash"></div>
-    </section>
-
-    <!-- Swap -->
-    <section class="card">
-        <h2>Swap Engine</h2>
-
-        <select id="swapFrom">
-            <option>USDC</option>
-            <option>EURC</option>
-            <option>cirBTC</option>
-        </select>
-
-        <select id="swapTo">
-            <option>USDC</option>
-            <option>EURC</option>
-            <option>cirBTC</option>
-        </select>
-
-        <input
-            type="number"
-            id="swapAmount"
-            placeholder="Amount">
-
-        <button id="swapBtn">
-            Swap
-        </button>
-    </section>
-
-    <!-- Bridge -->
-    <section class="card">
-        <h2>Bridge Engine</h2>
-
-        <select id="bridgeFrom">
-            <option>Sepolia</option>
-            <option>Arbitrum Sepolia</option>
-            <option>Arc Testnet</option>
-        </select>
-
-        <select id="bridgeTo">
-            <option>Arc Testnet</option>
-            <option>Sepolia</option>
-            <option>Arbitrum Sepolia</option>
-        </select>
-
-        <input
-            type="number"
-            id="bridgeAmount"
-            placeholder="Amount">
-
-        <button id="bridgeBtn">
-            Bridge Assets
-        </button>
-    </section>
-
-    <!-- Authentication -->
-    <section class="card">
-        <h2>Authentication</h2>
-
-        <button id="signLogin">
-            Sign Login
-        </button>
-
-        <div id="loginStatus">
-            Not Logged In
-        </div>
-    </section>
-
-    <!-- Recent Transactions -->
-    <section class="card full-width">
-        <h2>Recent Transactions</h2>
-
-        <table>
-
-            <thead>
-            <tr>
-                <th>Hash</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Time</th>
-            </tr>
-            </thead>
-
-            <tbody id="txTable">
-
-                <tr>
-                    <td colspan="4">
-                        No transactions found
-                    </td>
-                </tr>
-
-            </tbody>
-
-        </table>
-    </section>
+    <div class="wallet-box">
+        <h4>0x2A3f...8d7E</h4>
+        <span>Connected</span>
+    </div>
 
 </div>
 
-<script src="js/chains.js"></script>
-<script src="js/tokens.js"></script>
-<script src="js/wallet.js"></script>
-<script src="js/balance.js"></script>
-<script src="js/transfer.js"></script>
-<script src="js/swap.js"></script>
-<script src="js/bridge.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/app.js"></script>
+<div class="stats">
+
+    <div class="stat-card">
+        <h3>Total Balance</h3>
+        <h2>$1,248.75</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Total Assets</h3>
+        <h2>4</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Transactions</h3>
+        <h2>24</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Last Updated</h3>
+        <h2>Just now</h2>
+    </div>
+
+</div>
+
+<div class="dashboard">
+
+    <div class="card">
+        <h2>Wallet & Network</h2>
+        <p>Address: 0x2A3f...8d7E</p>
+        <p>Network: Arc Testnet</p>
+        <p>Chain ID: 5042002</p>
+        <p>RPC: https://rpc.testnet.arc.network</p>
+
+        <button>
+            Disconnect Wallet
+        </button>
+    </div>
+
+    <div class="card">
+        <h2>Unified Balance</h2>
+
+        <div class="token">USDC 1000.00</div>
+        <div class="token">EURC 200.00</div>
+        <div class="token">ETH 0.1500</div>
+        <div class="token">cirBTC 0.0000</div>
+    </div>
+
+    <div class="card">
+        <h2>Send / Transfer</h2>
+
+        <select>
+            <option>USDC</option>
+            <option>EURC</option>
+        </select>
+
+        <input placeholder="Recipient Address">
+
+        <input placeholder="Amount">
+
+        <button>
+            Send USDC
+        </button>
+    </div>
+
+    <div class="card">
+        <h2>Swap</h2>
+
+        <select>
+            <option>USDC</option>
+        </select>
+
+        <select>
+            <option>EURC</option>
+        </select>
+
+        <input placeholder="Amount">
+
+        <button>
+            Swap
+        </button>
+    </div>
+
+    <div class="card">
+        <h2>Bridge</h2>
+
+        <select>
+            <option>Sepolia</option>
+        </select>
+
+        <select>
+            <option>Arc Testnet</option>
+        </select>
+
+        <button>
+            Bridge USDC
+        </button>
+    </div>
+
+    <div class="card">
+        <h2>Authentication</h2>
+
+        <button>
+            Sign Login Message
+        </button>
+
+        <div class="success">
+            Logged In
+        </div>
+    </div>
+
+</div>
+
+<div class="tx-card">
+
+    <h2>Recent Transactions</h2>
+
+    <table>
+
+        <tr>
+            <th>Hash</th>
+            <th>Type</th>
+            <th>Token</th>
+            <th>Amount</th>
+            <th>Status</th>
+        </tr>
+
+        <tr>
+            <td>0x8d7E...a12b</td>
+            <td>Send</td>
+            <td>USDC</td>
+            <td>-50</td>
+            <td>Success</td>
+        </tr>
+
+        <tr>
+            <td>0x71cf...b33c</td>
+            <td>Swap</td>
+            <td>USDC→EURC</td>
+            <td>100</td>
+            <td>Success</td>
+        </tr>
+
+    </table>
+
+</div>
 
 </body>
-</html>
+</html>                                 
